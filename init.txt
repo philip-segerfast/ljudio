@@ -1,0 +1,4 @@
+1. installera vite
+2. installera vue
+3. installera ESLint
+4. fixa Prettier
