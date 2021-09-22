@@ -10,6 +10,7 @@
   },
   "plugins": ["vue"],
   "rules": {
-    "vue/no-multiple-template-root": ["off", "always"]
+    "vue/no-multiple-template-root": ["off", "always"],
+    "vue/valid-define-props": []
   }
 }
