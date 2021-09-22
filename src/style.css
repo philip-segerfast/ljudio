@@ -1,3 +1,20 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background-color: orange;
+  background-color: black;
+  color: white;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+}
+
+#yt-player {
+  display: none;
 }
