@@ -1,0 +1,8 @@
+Snippet generator:
+https://snippet-generator.app
+
+
+TODO:
+* Skapa sida för musik/artister/album
+* Routa rätt
+* Gör så att man kan spela upp musik

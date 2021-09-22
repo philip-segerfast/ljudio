@@ -1,5 +1,6 @@
-// gets called automatically when YouTube player loads
+/* eslint-disable */
 
+// gets called automatically when YouTube player loads
 function onYouTubeIframeAPIReady() {
   // using global variable
 
