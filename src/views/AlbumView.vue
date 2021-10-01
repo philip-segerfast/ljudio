@@ -1,7 +1,7 @@
 <script setup></script>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from "vuex";
+import { mapGetters, mapMutations, mapActions, mapState } from "vuex";
 
 export default {
   data() {
@@ -11,25 +11,32 @@ export default {
     };
   },
   watch: {
-    // MusicView from SearchResults.
-    async $route(to, from) {
-      // Song updated.
-      // await this.newSongPlaying();
+    // AlbumView from SearchResults
+    async $route(to) {
       let isFromSearchView = to.params.fromSearch;
+      console.error("FROM SEARCH VIEW: ", isFromSearchView);
       if (isFromSearchView) {
         this.resetPlayerState();
         console.log(":::::::::: 4 ::::::::::");
-        await this.initSongAndPlaylistAndPlayIfPlayerIsReady();
+        console.log("PLAYING SONG FROM SEARCH RESULTS");
+        await this.initSongAlbumPlaylistAndPlayIfPlayerIsReady();
         return;
+      }
+
+      let albumID = to.params.id;
+      if (albumID == this.getCurrentAlbumID) {
+        // SAME ALBUM, DIFFERENT SONG ID
+        // Kolla ifall song-id:t redan finns spellistan. Isf, hämta index för den låten
+        // och spela upp den.
       }
     },
   },
   async mounted() {
-    console.log("MOUNTED!!!!!");
+    console.error("MOUNTED!!!!!");
     this.resetPlayerState();
 
     // Player is loaded for the first time.
-    let playerWasReady = await this.initSongAndPlaylistAndPlayIfPlayerIsReady();
+    let playerWasReady = await this.initSongAlbumPlaylistAndPlayIfPlayerIsReady();
     console.log(":::::::::: 1 ::::::::::");
     console.log("Player was ready: ", playerWasReady);
 
@@ -37,9 +44,6 @@ export default {
     this.emitter.on("songPlayingUpdated", async ({ videoID, songIndex }) => {
       await this.updateCurrentSong({ index: songIndex });
       console.log(":::::::::: 2 ::::::::::");
-
-      // this.fetchAndCuePlaylist();
-      // await this.playNextOrPreviousSong();
     });
 
     // Will only execute once (or will it??)
@@ -47,7 +51,7 @@ export default {
     this.emitter.on("playerIsReady", async () => {
       if (!playerWasReady) {
         console.log(":::::::::: 3 ::::::::::");
-        await this.initSongAndPlaylistAndPlayIfPlayerIsReady();
+        await this.initSongAlbumPlaylistAndPlayIfPlayerIsReady();
         console.error("Player is ready! Make sure this message only shows once!.");
       }
     });
@@ -61,6 +65,9 @@ export default {
       "isPlaylistLoaded",
       "getCurrentSongObj",
       "getCurrentSongID",
+      "getCurrentAlbumObj",
+      "getCurrentAlbumID",
+      "getCurrentSongIndex",
     ]),
     songReady() {
       return this.songReady;
@@ -68,8 +75,13 @@ export default {
   },
   methods: {
     ...mapMutations(["updateHeaderInfo", "resetPlayerState"]),
-    ...mapActions(["fetchCurrentSong", "fetchPlaylist", "updateCurrentSong"]),
-    async initSongAndPlaylistAndPlayIfPlayerIsReady() {
+    ...mapActions([
+      "fetchCurrentSong",
+      "fetchAlbumPlaylist",
+      "updateCurrentSong",
+      "updateCurrentAlbumAndFetchPlaylist",
+    ]),
+    async initSongAlbumPlaylistAndPlayIfPlayerIsReady() {
       /**
           *  Se till att player är initialiserad.
           1. Spara låt-ID:t i store och fetcha den från Johans API (updateCurrentSong)
@@ -80,9 +92,9 @@ export default {
       let playerIsReady = this.isPlayerReady;
       if (playerIsReady) {
         let songIndex = this.$route.params.songIndex;
-        await this.updateCurrentSong({ songId: this.$route.params.id });
+        console.error("INIT SONG, ALBUM AND PLAYLIST IF PLAYER IS READY");
+        await this._fetchAlbumAndCuePlaylist(songIndex);
         this.songReady = true;
-        await this.fetchAndCuePlaylist(this.$route.params.songIndex);
         return true;
       } else {
         return false;
@@ -92,14 +104,25 @@ export default {
       this.emitter.emit("cuePlaylist", songIndex);
     },
     /**
-     * Fetches a playlist based on the current song and cues it.
+     * Fetches the album playlist
      */
-    async fetchAndCuePlaylist(songIndex) {
+    async _fetchAlbumAndCuePlaylist(songIndex) {
       if (this.isPlayerReady) {
-        await this.fetchPlaylist();
+        console.log("FETCH ALBUM AND CUE PLAYLIST {");
+        let albumId = this.$route.params.id;
+        console.log("ALBUM ID: ", albumId);
+        console.log("SONG INDEX: ", songIndex);
+        await this.updateCurrentAlbumAndFetchPlaylist({
+          albumId: this.$route.params.id,
+          songIndex: songIndex,
+        });
         this.cuePlaylist(songIndex);
       }
-      this.updateHeaderInfo([this.getCurrentSongObj.name, "Song"]);
+      this.updateHeaderInfo([
+        this.getCurrentAlbumObj.title + " by " + this.getCurrentAlbumObj.artist[0].name,
+        "Album",
+      ]);
+      console.log("} DONE");
     },
     play() {
       this.emitter.emit();
@@ -109,8 +132,8 @@ export default {
 </script>
 
 <template>
-  <div v-if="this.isPlayerReady && this.songReady" id="music-view-container">
-    <div id="music-cover">
+  <div v-if="this.isPlayerReady && this.songReady" id="album-view-container">
+    <div id="album-cover">
       <img
         referrerpolicy="no-referrer"
         class="cover-image"
@@ -119,16 +142,16 @@ export default {
       />
       <img class="cover-image" v-else src="/src/assets/song_placeholder.bmp" />
     </div>
-    <div id="music-info">
-      <div class="music-info-row">
+    <div id="album-info">
+      <div class="album-info-row">
         <span class="label">Song Name: </span>
         <span class="value">{{ this.getCurrentSongObj.name }}</span>
       </div>
-      <div class="music-info-row">
+      <div class="album-info-row">
         <span class="label">Artist: </span>
         <span class="value">{{ this.getCurrentSongObj.artist.name }}</span>
       </div>
-      <div class="music-info-row">
+      <div class="album-info-row">
         <span class="label">Album: </span>
         <span class="value">{{ this.getCurrentSongObj.album.name }}</span>
       </div>
@@ -140,14 +163,14 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-#music-view-container {
+#album-view-container {
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: fit-content 1fr;
   column-gap: 50px;
   padding: 20px;
 
-  #music-cover {
+  #album-cover {
     position: relative;
     display: flex;
     grid-column-start: 1;
@@ -162,11 +185,11 @@ export default {
     }
   }
 
-  #music-info {
+  #album-info {
     border: 1px solid rgb(44, 44, 44);
     grid-column-start: 2;
     padding: 25px;
-    .music-info-row {
+    .album-info-row {
       margin-bottom: 10px;
       font-size: x-large;
       .label {

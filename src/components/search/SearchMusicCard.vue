@@ -11,8 +11,8 @@ export default {
   components: {},
   methods: {
     redirectMusic() {
-      const routerUrl = "/music/" + this.musicObject.videoId;
-      this.$router.push({ path: routerUrl });
+      let videoID = this.musicObject.videoId;
+      this.$router.push({ name: "MusicView", params: { id: videoID, fromSearch: true } });
     },
   },
   mounted() {
@@ -30,7 +30,12 @@ export default {
 <template>
   <div id="search-music-card-container" @click="redirectMusic">
     <div id="top">
-      <img id="cover" :src="thumbnailUrl" />
+      <img
+        id="cover"
+        :src="thumbnailUrl"
+        referrerpolicy="no-referrer"
+        @error="console.log('Error')"
+      />
     </div>
     <div id="bottom">
       <abbr :title="musicObject.name">{{ musicObject.name }}</abbr>

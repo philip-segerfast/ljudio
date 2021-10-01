@@ -1,9 +1,17 @@
 import { createStore } from "vuex";
 
 import _ from "lodash";
+import router from "../router/router";
+import playerModule from "./playerModule";
 
 export default createStore({
+  modules: {
+    playerModule: playerModule,
+  },
   state: {
+    header: "",
+    infoType: "",
+    currentRoute: "",
     searchResults: {
       songs: [],
       albums: [],
@@ -15,6 +23,13 @@ export default createStore({
     updateMusicSearchResults: (state, payload) => (state.searchResults.songs = payload),
     updateArtistsSearchResults: (state, payload) => (state.searchResults.artists = payload),
     updateAlbumsSearchResults: (state, payload) => (state.searchResults.albums = payload),
+    updateHeaderInfo(state, [header, type]) {
+      state.header = header;
+      state.infoType = type;
+    },
+    updateRoute(state, payload) {
+      state.currentRoute = payload;
+    },
   },
   actions: {
     fetchSearchResults: async (context, payload) => {
@@ -68,6 +83,12 @@ export default createStore({
     },
     getArtistSearch: (state) => {
       return state.searchResults.artists;
+    },
+    getCurrentRoute: (state) => {
+      return state.currentRoute;
+    },
+    shouldMoveSearchBar: (state) => {
+      return state.currentRoute != "SearchView";
     },
   },
 });

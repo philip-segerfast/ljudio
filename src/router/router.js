@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import SearchView from "../views/SearchView.vue";
 import MusicView from "../views/MusicView.vue";
+import AlbumView from "../views/AlbumView.vue";
 import Player from "../components/Player.vue";
 
 const routes = [
@@ -12,9 +13,14 @@ const routes = [
     component: SearchView,
   },
   {
-    path: "/music/:id",
+    path: "/music/:id/:songIndex?:fromSearch?",
     name: "MusicView",
     component: MusicView,
+  },
+  {
+    path: "/album/:id/:songIndex/:fromSearch?",
+    name: "AlbumView",
+    component: AlbumView,
   },
 ];
 

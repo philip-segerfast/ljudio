@@ -1,6 +1,8 @@
 <script setup>
 /*tslint:disabled*/
 
+
+
 function play(id) {
   // calling global variable
   window.player.loadVideoById(id);

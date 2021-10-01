@@ -25,7 +25,7 @@ export default {
 <template>
   <div id="search-artist-card-container">
     <div id="top">
-      <img id="cover" :src="thumbnailUrl" />
+      <img id="cover" :src="thumbnailUrl" referrerpolicy="no-referrer" />
     </div>
     <div id="bottom">
       <abbr :title="artistObject.name">{{ artistObject.name }}</abbr>
