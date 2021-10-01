@@ -1,6 +1,6 @@
 # Vue 3 + Vite
 
-##För att kunna användas:
+## ör att kunna användas:
 1. klona repot
 2. Installera NPM (eller Yarn)
 3. kör npm i för att installera alla dependencies
