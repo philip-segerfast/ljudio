@@ -3,13 +3,19 @@
 <script>
 export default {
   data() {
-    return {
-      thumbnailUrl: "/src/assets/song_placeholder.bmp",
-    };
+    return {};
   },
   props: ["albumObject"],
   components: {},
-  methods: {},
+  methods: {
+    redirectAlbum() {
+      let albumID = this.albumObject.browseId;
+      this.$router.push({
+        name: "AlbumView",
+        params: { id: albumID, songIndex: 0, fromSearch: true },
+      });
+    },
+  },
   mounted() {
     let thumbnails = this.albumObject.thumbnails;
 
@@ -23,9 +29,9 @@ export default {
 </script>
 
 <template>
-  <div id="search-album-card-container">
+  <div id="search-album-card-container" @click="redirectAlbum">
     <div id="top">
-      <img id="cover" :src="thumbnailUrl" />
+      <img id="cover" :src="thumbnailUrl" referrerpolicy="no-referrer" />
     </div>
     <div id="bottom">
       <abbr :title="albumObject.name">{{ albumObject.name }}</abbr>

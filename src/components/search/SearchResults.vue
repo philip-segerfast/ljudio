@@ -12,7 +12,7 @@ export default {
       $("#search-results-container").fadeIn(500);
     },
     hide() {
-      //$("#search-results-container").fadeOut(500);
+      $("#search-results-container").fadeOut(500);
     },
   },
   computed: {
@@ -60,7 +60,7 @@ export default {
 #search-results-container {
   display: flex;
   flex-direction: column;
-  // display: none; // default behaviour
+  display: none; // default behaviour
   position: fixed; // position on top of everything else
   top: 80px;
   width: calc(100% - 60px);
@@ -68,6 +68,8 @@ export default {
   left: 30px;
   overflow-y: auto;
   padding: 10px;
+  z-index: 100;
+  background-color: black;
 
   .result-category-row {
     height: fit-content;

@@ -1,8 +1,32 @@
 Snippet generator:
 https://snippet-generator.app
 
+Öppna fil i nytt fönster:
+CTRL + K och sedan O
 
 TODO:
-* Skapa sida för musik/artister/album
-* Routa rätt
-* Gör så att man kan spela upp musik
+* När man går in på en låt så kommer låtar av artisten att läggas i kö också.
+
+
+Användbara youtube player-funktioner etc:
+getPlaylistIndex() // returnerar index för nuvarande låten som spelas i spellistan.
+getVideoData() // returnerar info om den nuvarande låten.
+playerInfo // är ett objekt som innehåller info som nuvarande upplösning mm.
+
+
+// Events for MusicView:
+
+MusicView laddas för första gången:
+* Se till att player är initialiserad.
+1. Spara låt-ID:t i store och fetcha den från Johans API
+2. Hämta spellista baserat på låten
+3. Cue:a spellistan när spelaren är redo.
+    Om den inte är redo, cue:a den när den är det.
+4. play()
+
+MusicView nästa/föregående låt:
+1. Spara låt-ID:t i store och fetcha den från Johans API
+2. play()
+
+MusicView från SearchResults:
+Samma som "MusicView laddas för första gången".
